@@ -23,7 +23,7 @@ RUN apt-get install -y apt-utils
 
 # → Install tzdata
 # ⚠ Remove to use UTC by default
-RUN ln -fs /usr/share/zoneinfo/Europe/Paris /etc/localtime
+RUN ln -fs /usr/share/zoneinfo/Asia/Taipei /etc/localtime
 RUN apt-get install -y tzdata
 RUN dpkg-reconfigure tzdata
 
@@ -35,35 +35,20 @@ RUN apt-get install -y \
    iproute2 \
    gawk \
    gcc \
-   net-tools\
-   libncurses5-dev \
-   openssl\
-   xterm\
-   autoconf \
-   libtool\
-   texinfo\
-   zlib1g\
-   zlib1g-dev\
-   gcc-multilib\
-   build-essential\
-   automake \
-   screen\
-   g++\
-   xz-utils\
-   gcc-11\
-   patch\
-   python3-jinja2\
-   diffutils\
-   debianutils\
-   iputils-ping\
-   python3\
-   cpio\
-   gnupg \
+   net-tools libncurses-dev \
+   openssl xterm autoconf \
+   libtool texinfo zlib1g zlib1g-dev gcc-multilib build-essential automake \
+   screen g++ xz-utils gcc-11 patch python3-jinja2 diffutils debianutils iputils-ping python3 cpio gnupg \
    less \
    rsync \
    bc \
    lsb-release \
-   libtinfo5
+   libtinfo5 \
+   dnsutils \
+   zerofree \
+   kpartx \
+   binfmt-support \
+   qemu-user-static
 
 # Removed dependencies for now:
 #zlib1g:i386\
@@ -71,13 +56,13 @@ RUN apt-get install -y \
 #libselinux1\
 #libstdc++\
 
-   #RUN apt-get install -y\
-   #                iproute2\
-   #                gcc\
-   #                g++\
-   #                zlib1g\
-   #                zlib1g:i386\
-   #                zlib1g-dev\
+#RUN apt-get install -y\
+#                iproute2\
+#                gcc\
+#                g++\
+#                zlib1g\
+#                zlib1g:i386\
+#                zlib1g-dev\
 #                libssl-dev\
 #                flex\
 #                bison\
@@ -107,7 +92,7 @@ RUN apt install -y vim
 
 # Create petalinux user and directory
 RUN mkdir -p /opt/petalinux
-RUN useradd -s /bin/bash -g users  -m petalinux
+RUN useradd -s /bin/bash -g users -m petalinux
 RUN chown petalinux:users /opt/petalinux
 RUN chmod 755 /opt/petalinux
 
@@ -119,9 +104,9 @@ WORKDIR /home/petalinux
 COPY --chown=petalinux:users ./$PTLNX_INSTALLER .
 RUN chmod +x ./$PTLNX_INSTALLER
 
-
 # Patch and run installer
-RUN ./$PTLNX_INSTALLER -y -p aarch64 -d /opt/petalinux
+# RUN ./$PTLNX_INSTALLER -y -p aarch64 -d /opt/petalinux
+RUN ./$PTLNX_INSTALLER -y -d /opt/petalinux
 
 USER root
 
@@ -131,7 +116,6 @@ COPY ./tftp /etc/xinetd.d/tftp
 RUN mkdir -p /tftpboot
 RUN chown -R nobody /tftpboot
 RUN chmod -R 777 /tftpboot
-
 
 #RUN ./update_esdk.sh
 #RUN rm -r esdk.sh.split update_esdk.sh
@@ -152,6 +136,6 @@ RUN mkdir -p outputs
 RUN chmod 755 outputs
 
 # Source the petalinux stuff in the .bashrc
-RUN echo "export DL_DIR=$HOME/cache/downloads"        >> ~/.bashrc
-RUN echo "export SSTATE_DIR=$HOME/cache/sstate-cache" >> ~/.bashrc
-RUN echo "source /opt/petalinux/settings.sh"          >> ~/.bashrc
+RUN echo "export DL_DIR=$HOME/cache/downloads" >>~/.bashrc
+RUN echo "export SSTATE_DIR=$HOME/cache/sstate-cache" >>~/.bashrc
+RUN echo "source /opt/petalinux/settings.sh" >>~/.bashrc

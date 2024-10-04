@@ -1,4 +1,5 @@
 image_name := "petalinux:2024.1"
+set dotenv-load := true
 
 # Check that the given environment variable is defined
 env-check-var var:
@@ -9,7 +10,6 @@ env-check-var var:
 env-ensure:
    @just env-check-var "DL_DIR"
    @just env-check-var "SSTATE_DIR"
-
 
 # Build the docker image
 image-build:

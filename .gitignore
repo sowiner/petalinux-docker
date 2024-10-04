@@ -1,0 +1,5 @@
+project/
+downloads/
+sstate-cache/
+*.bsp
+*run
